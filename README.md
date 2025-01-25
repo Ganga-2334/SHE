@@ -29,12 +29,15 @@ For Software:
 For Software:
 
 # Screenshots (Add at least 3)
-ss1.png
+(https://github.com/user-attachments/assets/ba7af355-cc4a-4407-bc59-aecb6859f19c)
+(https://github.com/user-attachments/assets/05f982c6-dd1f-4b5f-9b7d-8db59b8a60f4)
+(https://github.com/user-attachments/assets/d7d3e8c7-6a7a-44f9-bd12-872840eaa42f)
+
 ss2.png
 ss3.png
 
 ### Project Demo
-# Video
-Untitled_Project_V1.mp4
+https://github.com/user-attachments/assets/0ae5315c-e007-46f4-a003-e3a35fcfafa8
+
 ---
 Made with ❤️ at TinkerHub
