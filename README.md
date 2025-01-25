@@ -35,7 +35,6 @@ ss3.png
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+Untitled_Project_V1.mp4
 ---
 Made with ❤️ at TinkerHub
