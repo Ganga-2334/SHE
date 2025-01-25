@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Fund/Assistance - Women's Safety App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .fund-status {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            background-color: #e0e0e0;
+            height: 20px;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .progress {
+            background-color: #4CAF50;
+            height: 100%;
+            border-radius: 10px;
+            width: 0;
+            transition: width 0.5s ease-in-out;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 20px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .resources {
+            margin-top: 30px;
+        }
+        .resource-item {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        #assistanceForm {
+            margin-top: 20px;
+        }
+        #assistanceForm label {
+            display: block;
+            margin-top: 10px;
+        }
+        #assistanceForm textarea {
+            width: 100%;
+            height: 100px;
+            padding: 8px;
+            margin: 5px 0 20px;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Emergency Fund/Assistance</h1>
+        
+        <div class="fund-status">
+            <h2>Your Emergency Fund</h2>
+            <p>Current Balance: $<span id="fundBalance">500</span></p>
+            <p>Goal: $1000</p>
+            <div class="progress-bar">
+                <div id="fundProgress" class="progress"></div>
+            </div>
+        </div>
+
+        <div>
+            <h2>Manage Your Fund</h2>
+            <input type="number" id="amount" placeholder="Enter amount">
+            <button class="button" onclick="addToFund()">Add to Fund</button>
+            <button class="button" onclick="withdrawFromFund()">Withdraw from Fund</button>
+        </div>
+
+        <div id="assistanceForm">
+            <h2>Request Emergency Assistance</h2>
+            <form onsubmit="requestAssistance(event)">
+                <label for="assistanceAmount">Amount Needed ($):</label>
+                <input type="number" id="assistanceAmount" required>
+                
+                <label for="reason">Reason for Assistance:</label>
+                <textarea id="reason" required></textarea>
+                
+                <button type="submit" class="button">Submit Request</button>
+            </form>
+        </div>
+
+        <div class="resources">
+            <h2>Emergency Resources</h2>
+            <div class="resource-item">
+                <h3>Local Women's Shelter</h3>
+                <p>24/7 Hotline: 1-800-555-HELP</p>
+                <p>Address: 123 Safe Haven St, Cityville</p>
+            </div>
+            <div class="resource-item">
+                <h3>Financial Assistance Program</h3>
+                <p>Contact: Jane Doe</p>
+                <p>Email: assistance@example.org</p>
+                <p>Phone: (555) 123-4567</p>
+            </div>
+            <div class="resource-item">
+                <h3>Legal Aid Services</h3>
+                <p>Free consultation for emergency situations</p>
+                <p>Phone: (555) 987-6543</p>
+                <p>Website: <a href="#">www.legalaid.example.com</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let fundBalance = 500;
+        const fundGoal = 1000;
+
+        function updateFundDisplay() {
+            document.getElementById('fundBalance').textContent = fundBalance;
+            const progress = (fundBalance / fundGoal) * 100;
+            document.getElementById('fundProgress').style.width = `${progress}%`;
+        }
+
+        function addToFund() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+            fundBalance += amount;
+            updateFundDisplay();
+            alert(`Successfully added $${amount} to your emergency fund.`);
+            document.getElementById('amount').value = '';
+        }
+
+        function withdrawFromFund() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+            if (amount > fundBalance) {
+                alert('Insufficient funds. You cannot withdraw more than your current balance.');
+                return;
+            }
+            fundBalance -= amount;
+            updateFundDisplay();
+            alert(`Successfully withdrew $${amount} from your emergency fund.`);
+            document.getElementById('amount').value = '';
+        }
+
+        function requestAssistance(event) {
+            event.preventDefault();
+            const amount = parseFloat(document.getElementById('assistanceAmount').value);
+            const reason = document.getElementById('reason').value;
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid assistance amount.');
+                return;
+            }
+
+            // In a real application, this would send the request to a server
+            alert(`Emergency assistance request submitted:\nAmount: $${amount}\nReason: ${reason}\n\nOur team will review your request and contact you soon.`);
+            
+            document.getElementById('assistanceAmount').value = '';
+            document.getElementById('reason').value = '';
+        }
+
+        // Initialize the fund display
+        updateFundDisplay();
+    </script>
+</body>
+</html>

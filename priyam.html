@@ -1,0 +1,382 @@
+[1/25/2025 2:35 PM] Alka: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elderly Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+    
+<body>
+    <header>
+        <h1>​പ്രിയം</h1>
+        <img src="/">
+            <select id="language-select">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="ml">Malayalam</option>
+        </select>
+    </header>
+        
+    <audio controls> 
+        <source src="audio.mp3">
+    </audio>
+
+    <nav>
+        <button id="documents-btn">Documents</button>
+        <button id="calendar-btn">Calendar</button>
+        <button id="reminders-btn">Reminders</button>
+        <button id="quote-btn">Daily Quote</button>
+        <button id="location-btn">Nearby Centers</button>
+    </nav>
+
+    <main>
+        <section id="documents" class="hidden">
+            <h2>Important Documents</h2>
+            <div id="document-list"></div>
+            <form id="document-form">
+                <input type="text" id="doc-name" placeholder="Document Name" required>
+                <input type="file" id="doc-file" required>
+                <button type="submit">Save Document</button>
+            </form>
+        </section>
+
+        <section id="calendar" class="hidden">
+            <h2>Calendar</h2>
+            <div id="calendar-container"></div>
+        </section>
+
+        <section id="reminders" class="hidden">
+            <h2>Reminders</h2>
+            <div id="reminder-list"></div>
+            <form id="reminder-form">
+                <input type="text" id="reminder-text" placeholder="Reminder Text" required>
+                <input type="datetime-local" id="reminder-time" required>
+                <button type="submit">Add Reminder</button>
+            </form>
+        </section>
+
+        <section id="quote" class="hidden">
+            <h2>Daily Quote</h2>
+            <p id="quote-text"></p>
+        </section>
+
+        <section id="location" class="hidden">
+            <h2>Nearby Akshaya Centers</h2>
+            <div id="center-list"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Elderly Assistant</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
+[1/25/2025 2:35 PM] Alka: // Service Worker Registration
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker
+      .register("sw.js")
+      .then((reg) => console.log("Service Worker registered"))
+      .catch((err) => console.log("Service Worker not registered", err))
+  }
+  
+  // DOM Elements
+  const languageSelect = document.getElementById("language-select")
+  const navButtons = document.querySelectorAll("nav button")
+  const sections = document.querySelectorAll("main section")
+  const documentForm = document.getElementById("document-form")
+  const documentList = document.getElementById("document-list")
+  const reminderForm = document.getElementById("reminder-form")
+  const reminderList = document.getElementById("reminder-list")
+  const quoteText = document.getElementById("quote-text")
+  const centerList = document.getElementById("center-list")
+  
+  // Language translations
+  const translations = {
+    en: {
+      documents: "Documents",
+      calendar: "Calendar",
+      reminders: "Reminders",
+      quote: "Daily Quote",
+      location: "Nearby Centers",
+    },
+    hi: {
+      documents: "दस्तावेज़",
+      calendar: "कैलेंडर",
+      reminders: "रिमाइंडर",
+      quote: "दैनिक उद्धरण",
+      location: "निकटवर्ती केंद्र",
+    },
+    ml: {
+      documents: "രേഖകൾ",
+      calendar: "കലണ്ടർ",
+      reminders: "ഓർമ്മപ്പെടുത്തലുകൾ",
+      quote: "ദൈനംദിന ഉദ്ധരണി",
+      location: "സമീപത്തുള്ള കേന്ദ്രങ്ങൾ",
+    },
+  }
+  
+  // Change language
+  languageSelect.addEventListener("change", (e) => {
+    const lang = e.target.value
+    navButtons.forEach((btn) => {
+      btn.textContent = translations[lang][btn.id.split("-")[0]]
+    })
+  })
+  
+  // Navigation
+  navButtons.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      sections.forEach((section) => section.classList.add("hidden"))
+      document.getElementById(btn.id.split("-")[0]).classList.remove("hidden")
+    })
+  })
+  
+  // Document Storage
+  documentForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const name = document.getElementById("doc-name").value
+    const file = document.getElementById("doc-file").files[0]
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const documents = JSON.parse(localStorage.getItem("documents") || "[]")
+      documents.push({ name, content: event.target.result })
+      localStorage.setItem("documents", JSON.stringify(documents))
+      displayDocuments()
+    }
+    reader.readAsDataURL(file)
+  })
+  
+  function displayDocuments() {
+    const documents = JSON.parse(localStorage.getItem("documents") || "[]")
+    documentList.innerHTML = documents
+      .map(
+        (doc) => `
+          <div class="document-item">
+              <strong>${doc.name}</strong>
+              <a href="${doc.content}" download="${doc.name}">Download</a>
+          </div>
+      `,
+      )
+      .join("")
+  }
+  
+  // Calendar
+  function displayCalendar() {
+    const calendarContainer = document.getElementById("calendar-container")
+    const date = new Date()
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const daysInMonth = new Date(year, month + 1, 0).getDate()
+  
+    calendarContainer.innerHTML = ""
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dayElement = document.createElement("div")
+      dayElement.classList.add("calendar-day")
+      dayElement.textContent = i
+      calendarContainer.appendChild(dayElement)
+    }
+  }
+  
+  // Reminders
+  reminderForm.addEventListener("submit", (e) => {
+    e.preventDefault()
+    const text = document.getElementById("reminder-text").value
+    const time = document.getElementById("reminder-time").value
+    const reminders = JSON.parse(localStorage.getItem("reminders") || "[]")
+    reminders.push({ text, time })
+    localStorage.setItem("reminders", JSON.stringify(reminders))
+    displayReminders()
+  })
+  
+  function displayReminders() {
+    const reminders = JSON.parse(localStorage.getItem("reminders") || "[]")
+    reminderList.innerHTML = reminders
+      .map(
+        (reminder) => `
+          <div class="reminder-item">
+              <strong>${reminder.text}</strong>
+              <span>${new Date(reminder.time).toLocaleString()}</span>
+          </div>
+      `,
+      )
+      .join("")
+  }
+  
+  // Daily Quote
+  function displayDailyQuote() {
+    const quotes = [
+      "The greatest glory in living lies not in never falling, but in rising every time we fall. - Nelson Mandela",
+      "The way to get started is to quit talking and begin doing. - Walt Disney",
+      "Your time is limited, don't waste it living someone else's life. - Steve Jobs",
+      "If life were predictable it would cease to be life, and be without flavor. - Eleanor Roosevelt",
+      "If you look at what you have in life, you'll always have more. - Oprah Winfrey",
+    ]
+    quoteText.textContent = quotes[Math.floor(Math.random() * quotes.length)]
+  }
+  
+  // Nearby Centers (Mock data)
+  function displayNearbyCenters() {
+    const centers = [
+      { name: "Akshaya Center 1", address: "123 Main St, City" },
+      { name: "Akshaya Center 2", address: "456 Oak St, City" },
+      { name: "Akshaya Center 3", address: "789 Pine St, City" },
+    ]
+    centerList.innerHTML = centers
+      .map(
+        (center) => `
+          <div class="center-item">
+              <strong>${center.name}</strong>
+              <p>${center.address}</p>
+          </div>
+      `,
+      )
+      .join("")
+  }
+  
+  // Initial display
+  displayDocuments()
+  displayCalendar()
+  displayReminders()
+  displayDailyQuote()
+  displayNearbyCenters()
+  
+  // Check and display reminders
+  setInterval(() => {
+    const reminders = JSON.parse(localStorage.getItem("reminders") || "[]")
+    const now = new Date()
+    reminders.forEach((reminder) => {
+      if (new Date(reminder.time) <= now) {
+        alert(Reminder: ${reminder.text})
+      }
+    })
+  }, 60000) // Check every minute
+[1/25/2025 2:35 PM] Alka: body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  header {
+    background-color: #2d0404;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-around;
+    background-color: #e7ce93ab;
+    padding: 0.5rem;
+  }
+  
+  nav button {
+    background-color: #340606;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  
+  nav button:hover {
+    background-color: #666;
+  }
+  
+  main {
+    padding: 2rem;
+  }
+  
+  section {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  input,
+  button {
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #444;
+  }
+  
+  footer {
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  #language-select {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+  
+  #calendar-container {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .calendar-day {
+    background-color: #eee;
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 5px;
+  }
+  
+  #reminder-list,
+  #document-list,
+  #center-list {
+    margin-top: 1rem;
+  }
+  
+  .reminder-item,
+  .document-item,
+  .center-item {
+    background-color: #eee;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 5px;
+  }
+[1/25/2025 2:35 PM] Alka: const CACHE_NAME = "elderly-assistant-v1"
+const urlsToCache = ["/", "/index.html", "/styles.css", "/script.js"]
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache)))
+})
+
+self.addEventListener("fetch", (event) => {
+  event.respondWith(caches.match(event.request).then((response) => response || fetch(event.request)))
+})

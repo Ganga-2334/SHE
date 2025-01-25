@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio/Video Recording - Women's Safety App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .recording-options {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .recording-options label {
+            margin: 0 10px;
+        }
+        .button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #stopButton {
+            background-color: #f44336;
+        }
+        #stopButton:hover {
+            background-color: #d32f2f;
+        }
+        #sendButton {
+            background-color: #2196F3;
+        }
+        #sendButton:hover {
+            background-color: #1976D2;
+        }
+        .preview-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        #previewElement {
+            max-width: 100%;
+            margin-top: 10px;
+        }
+        .alert {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Audio/Video Recording</h1>
+        <div class="recording-options">
+            <label>
+                <input type="radio" name="recordingType" value="audio" checked> Audio
+            </label>
+            <label>
+                <input type="radio" name="recordingType" value="video"> Video
+            </label>
+        </div>
+        <div class="button-container">
+            <button id="startButton">Start Recording</button>
+            <button id="stopButton" disabled>Stop Recording</button>
+        </div>
+        <div class="preview-container">
+            <div id="previewContainer"></div>
+            <button id="sendButton" style="display: none;">Send to Emergency Contacts</button>
+        </div>
+        <div class="alert">
+            <strong>Important Safety Information:</strong> This feature is designed for emergency use. Always prioritize your safety and contact authorities if you're in immediate danger.
+        </div>
+    </div>
+
+    <script>
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const sendButton = document.getElementById('sendButton');
+        const previewContainer = document.getElementById('previewContainer');
+        const recordingOptions = document.getElementsByName('recordingType');
+
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        startButton.addEventListener('click', startRecording);
+        stopButton.addEventListener('click', stopRecording);
+        sendButton.addEventListener('click', sendRecording);
+
+        async function startRecording() {
+            const recordingType = document.querySelector('input[name="recordingType"]:checked').value;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    audio: true,
+                    video: recordingType === 'video'
+                });
+
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, {
+                        type: recordingType === 'audio' ? 'audio/webm' : 'video/webm'
+                    });
+                    const url = URL.createObjectURL(blob);
+                    displayPreview(url, recordingType);
+                };
+
+                mediaRecorder.start();
+                startButton.disabled = true;
+                stopButton.disabled = false;
+                recordingOptions.forEach(option => option.disabled = true);
+            } catch (error) {
+                console.error('Error accessing media devices:', error);
+                alert('Unable to access media devices. Please check your permissions.');
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                startButton.disabled = false;
+                stopButton.disabled = true;
+                recordingOptions.forEach(option => option.disabled = false);
+            }
+        }
+
+        function displayPreview(url, type) {
+            const previewElement = type === 'audio' ? document.createElement('audio') : document.createElement('video');
+            previewElement.id = 'previewElement';
+            previewElement.controls = true;
+            previewElement.src = url;
+
+            previewContainer.innerHTML = '';
+            previewContainer.appendChild(previewElement);
+            sendButton.style.display = 'inline-block';
+        }
+
+        function sendRecording() {
+            // In a real app, you would send the recording to a server or emergency contacts
+            alert('Recording sent to emergency contacts!');
+            // Reset the recording state
+            recordedChunks = [];
+            previewContainer.innerHTML = '';
+            sendButton.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

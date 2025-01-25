@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Walk Buddy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #walkButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #walkButton:hover {
+            background-color: #45a049;
+        }
+        #message {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Virtual Walk Buddy!</h1>
+    <p>Click the button below to start your virtual walk. Stay motivated!</p>
+
+    <button id="walkButton">Start Walk</button>
+
+    <div id="message"></div>
+
+    <script>
+        const encouragements = [
+            "You're doing great! Keep it up!",
+            "Almost there! Just a bit further!",
+            "Fantastic progress! Don't stop now!",
+            "You're on fire today! Keep going!",
+            "Well done! Every step counts!"
+        ];
+
+        let distanceWalked = 0;  // in meters
+        const totalDistance = 1000;  // 1 km
+
+        document.getElementById("walkButton").addEventListener("click", startWalk);
+
+        function startWalk() {
+            // Disable the button to prevent multiple clicks
+            document.getElementById("walkButton").disabled = true;
+            document.getElementById("message").innerText = "Starting your walk... Stay motivated!";
+
+            // Start simulating the walk
+            walk();
+        }
+
+        function walk() {
+            const interval = setInterval(() => {
+                let step = Math.floor(Math.random() * (15 - 5 + 1)) + 5;  // Random step between 5m to 15m
+                distanceWalked += step;
+
+                // Update message with distance walked
+                if (distanceWalked % 200 === 0) {
+                    document.getElementById("message").innerText = `Distance walked: ${distanceWalked} meters. ${getEncouragement()}`;
+                }
+
+                if (distanceWalked >= totalDistance) {
+                    clearInterval(interval);
+                    document.getElementById("message").innerText = `Congratulations! You've completed your virtual walk of 1 kilometer!`;
+                    document.getElementById("walkButton").disabled = false; // Re-enable the button
+                }
+            }, 1000); // Update every 1 second (simulate time passing)
+        }
+
+        function getEncouragement() {
+            return encouragements[Math.floor(Math.random() * encouragements.length)];
+        }
+    </script>
+
+</body>
+</html>

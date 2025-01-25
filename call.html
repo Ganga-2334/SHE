@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Services Directory - Women's Safety App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .search-bar {
+            margin-bottom: 20px;
+        }
+        #search {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .service-category {
+            margin-bottom: 30px;
+        }
+        .service-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .service-item {
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .service-item:hover {
+            background-color: #e9e9e9;
+        }
+        .service-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .service-phone {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .service-address {
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        .call-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .call-button:hover {
+            background-color: #2980b9;
+        }
+        .emergency-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: #e74c3c;
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        .emergency-button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Emergency Services Directory</h1>
+        
+        <button class="emergency-button" onclick="callEmergencyServices()">Call Emergency Services (911)</button>
+        
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search for services...">
+        </div>
+        
+        <div id="servicesContainer">
+            <!-- Services will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const emergencyServices = [
+            {
+                category: "Police Stations",
+                services: [
+                    { name: "Central Police Station", phone: "555-0100", address: "123 Main St, Cityville" },
+                    { name: "Westside Police Department", phone: "555-0101", address: "456 Oak Ave, Cityville" },
+                    { name: "Eastside Police Precinct", phone: "555-0102", address: "789 Elm St, Cityville" }
+                ]
+            }
+        ];
+
+        function renderServices() {
+            const servicesContainer = document.getElementById('servicesContainer');
+            servicesContainer.innerHTML = '';
+
+            emergencyServices.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'service-category';
+                categoryDiv.innerHTML = `
+                    <h2>${category.category}</h2>
+                    <ul class="service-list">
+                        ${category.services.map(service => `
+                            <li class="service-item">
+                                <div class="service-name">${service.name}</div>
+                                <div class="service-phone">${service.phone}</div>
+                                <div class="service-address">${service.address}</div>
+                                <button class="call-button" onclick="callService('${service.phone}')">Call</button>
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+                servicesContainer.appendChild(categoryDiv);
+            });
+        }
+
+        function callEmergencyServices() {
+            alert("Simulating call to 911. In a real app, this would initiate an emergency call.");
+        }
+
+        function callService(phoneNumber) {
+            alert(`Simulating call to ${phoneNumber}. In a real app, this would initiate a phone call.`);
+        }
+
+        document.getElementById('search').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const servicesContainer = document.getElementById('servicesContainer');
+            servicesContainer.innerHTML = '';
+
+            emergencyServices.forEach(category => {
+                const filteredServices = category.services.filter(service => 
+                    service.name.toLowerCase().includes(searchTerm) ||
+                    service.address.toLowerCase().includes(searchTerm)
+                );
+
+                if (filteredServices.length > 0) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'service-category';
+                    categoryDiv.innerHTML = `
+                        <h2>${category.category}</h2>
+                        <ul class="service-list">
+                            ${filteredServices.map(service => `
+                                <li class="service-item">
+                                    <div class="service-name">${service.name}</div>
+                                    <div class="service-phone">${service.phone}</div>
+                                    <div class="service-address">${service.address}</div>
+                                    <button class="call-button" onclick="callService('${service.phone}')">Call</button>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    `;
+                    servicesContainer.appendChild(categoryDiv);
+                }
+            });
+        });
+
+        // Initial render
+        renderServices();
+    </script>
+</body>
+</html>

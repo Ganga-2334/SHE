@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHE - Women's Safety App</title>
+    <style>
+        :root {
+            --primary-color: #8e44ad;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --text-color: #2c3e50;
+            --card-background: #ffffff;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        h1, h2 {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--primary-color);
+        }
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .feature {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .feature h3 {
+            color: var(--primary-color);
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.2s;
+            /* margin-top: auto; */
+        }
+        button:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        #emergencySOS {
+            background-color: var(--accent-color);
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        #emergencySOS:hover {
+            background-color: #c0392b;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin-left: auto;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--secondary-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        #selfDefenseTip {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        #alerts, #communityReports {
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .alert, .report {
+            margin-bottom: 8px;
+            padding: 8px;
+            background-color: #fff3cd;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        #locationStatus, #checkInStatus {
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        #virtualWalkBuddy, #safeRoutes, #emergencyServices {
+            grid-column: span 3;
+        }
+        #recordingStatus, #privacyModeStatus {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        #chatbotContainer {
+            grid-column: span 3;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        #chatbotMessages {
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        #chatbotInput {
+            display: flex;
+        }
+        #chatbotInput input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px 0 0 5px;
+        }
+        #chatbotInput button {
+            border-radius: 0 5px 5px 0;
+        }
+        #safetyProfile {
+            grid-column: span 3;
+        }
+        #safetyProfile form {
+            display: grid;
+            gap: 10px;
+        }
+        #safetyProfile input, #safetyProfile select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        #emergencyFund {
+            grid-column: span 3;
+        }
+        #emergencyFund form {
+            display: flex;
+            gap: 10px;
+        }
+        #emergencyFund input {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SHE</h1>
+        <h2>Women's Safety App</h2>
+        
+        <div class="feature">
+            <h3>Emergency SOS</h3>
+            <a href="/tinkherhack/sos.html"><button id="emergencySOS">Activate Emergency SOS</button></a>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-header">
+                <h3>Location Sharing</h3>
+                <label class="switch">
+                    <input type="checkbox" id="locationSharing">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <a href="/tinkherhack/location.html"><p id="locationStatus">Location sharing is off</p></a>
+        </div>
+        
+        <div class="feature">
+            <div class="feature-header">
+                <h3>Safety Check-In</h3>
+                <label class="switch">
+                    <input type="checkbox" id="safetyCheckIn">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p id="checkInStatus">Safety check-in is off</p>
+        </div>
+        
+        <div class="feature">
+            <h3>Real-Time Alerts</h3>
+            <div id="alerts"></div>
+        </div>
+
+        <div class="feature">
+            <h3>Self-Defense Tips</h3>
+            <p id="selfDefenseTip"></p>
+            <button id="newTip">Get New Tip</button>
+        </div>
+
+        <div class="feature">
+            <h3>Community Support</h3>
+            <div id="communityReports"></div>
+            <button id="reportIncident">Report Incident</button>
+        </div>
+
+        <div class="feature" id="virtualWalkBuddy">
+            <h3>Virtual Walk Buddy</h3>
+            <a href="/tinkherhack/Talking.html"><button id="startWalk">Start Virtual Walk</button></a>
+            <p id="walkStatus"></p>
+        </div>
+
+        <div class="feature" id="safeRoutes">
+            <h3>Safe Routes</h3>
+            <input type="text" id="destination" placeholder="Enter your destination">
+            <a href="/tinkherhack/route.html"><button id="findRoute">Find Safe Route</button></a>
+            <p id="routeInfo"></p>
+        </div>
+
+        <div class="feature">
+            <h3>Audio/Video Recording</h3>
+            <a href="/tinkherhack/record.html"><button id="toggleRecording">Start Recording</button></a>
+            <p id="recordingStatus">Recording is off</p>
+        </div>
+
+        <div class="feature" id="emergencyServices">
+            <h3>Emergency Services Directory</h3>
+            <a href="/tinkherhack/call.html"><button id="callPolice">Call Police</button></a>
+            <a href="/tinkherhack/ambu.html"><button id="callAmbulance">Call Ambulance</button></a>
+            <a href="/tinkherhack/fire.html"><button id="callFireDept">Call Fire Department</button></a>
+        </div>
+
+        <div class="feature">
+            <h3>Privacy Mode</h3>
+            <a href="/tinkherhack/mode.html"><button id="togglePrivacyMode">Enable Privacy Mode</button></a>
+            <p id="privacyModeStatus">Privacy Mode is off</p>
+        </div>
+
+        <div class="feature">
+            <h3>Silent Alarm</h3>
+            <a href="/tinkherhack/alarm.html"><button id="activateSilentAlarm">Activate Silent Alarm</button></a>
+        </div>
+
+        <div class="feature" id="safetyProfile">
+            <h3>Personalized Safety Profile</h3>
+            <form id="profileForm">
+                <input type="text" id="name" placeholder="Your Name" required>
+                <input type="tel" id="emergencyContact" placeholder="Emergency Contact Number" required>
+                <input type="text" id="medicalInfo" placeholder="Important Medical Information">
+                <select id="safetyPreferences">
+                    <option value="">Select Safety Preference</option>
+                    <option value="frequent">Frequent Check-ins</option>
+                    <option value="discreet">Discreet Monitoring</option>
+                    <option value="standard">Standard Protection</option>
+                </select>
+                <a href="/tinkherhack/personal.html"><button type="submit">Save Profile</button></a>
+            </form>
+        </div>
+
+        <div class="feature" id="chatbotContainer">
+            <h3>Safety Assistant Chatbot</h3>
+            <div id="chatbotMessages"></div>
+            <div id="chatbotInput">
+                <input type="text" id="userMessage" placeholder="Type your message here...">
+                <a href="/tinkherhack/chatbot.html"><button id="sendMessage">Send</button></a>
+            </div>
+        </div>
+
+        <div class="feature" id="emergencyFund">
+            <h3>Emergency Fund/Assistance</h3>
+            <form id="emergencyFundForm">
+                <input type="number" id="fundAmount" placeholder="Amount Needed" min="1" step="1" required>
+                <select id="fundReason" required>
+                    <option value="">Select Reason</option>
+                    <option value="transport">Emergency Transport</option>
+                    <option value="accommodation">Safe Accommodation</option>
+                    <option value="medical">Medical Assistance</option>
+                    <option value="legal">Legal Aid</option>
+                </select>
+                <a href="/tinkherhack/assistance.html"><button type="submit">Request Assistance</button></a>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Existing JavaScript code...
+
+        // Emergency SOS
+        document.getElementById('emergencySOS').addEventListener('click', function() {
+            this.disabled = true;
+            this.textContent = 'Activating...';
+            setTimeout(() => {
+                alert("Emergency SOS activated! Alerting your emergency contacts and local authorities.");
+                this.disabled = false;
+                this.textContent = 'Activate Emergency SOS';
+            }, 2000);
+        });
+
+        // Location Sharing
+        document.getElementById('locationSharing').addEventListener('change', function() {
+            const statusElement = document.getElementById('locationStatus');
+            if (this.checked) {
+                if ("geolocation" in navigator) {
+                    statusElement.textContent = 'Fetching location...';
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            setTimeout(() => {
+                                statusElement.textContent = `Location shared: Lat ${position.coords.latitude.toFixed(2)}, Lon ${position.coords.longitude.toFixed(2)}`;
+                            }, 1000);
+                        },
+                        function(error) {
+                            console.error('Error getting location:', error);
+                            let errorMsg = 'Failed to get location. ';
+                            switch(error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorMsg += 'User denied the request for Geolocation.';
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorMsg += 'Location information is unavailable.';
+                                    break;
+                                case error.TIMEOUT:
+                                    errorMsg += 'The request to get user location timed out.';
+                                    break;
+                                case error.UNKNOWN_ERROR:
+                                    errorMsg += 'An unknown error occurred.';
+                                    break;
+                            }
+                            statusElement.textContent = errorMsg;
+                            document.getElementById('locationSharing').checked = false;
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                    );
+                } else {
+                    alert("Geolocation is not supported by your browser");
+                    this.checked = false;
+                }
+            } else {
+                statusElement.textContent = 'Location sharing is off';
+            }
+        });
+
+        // Safety Check-In
+        let checkInInterval;
+        document.getElementById('safetyCheckIn').addEventListener('change', function() {
+            const statusElement = document.getElementById('checkInStatus');
+            if (this.checked) {
+                statusElement.textContent = 'Next check-in: 30:00';
+                let remainingTime = 30 * 60;
+                checkInInterval = setInterval(() => {
+                    remainingTime--;
+                    if (remainingTime <= 0) {
+                        alert("Safety check-in: Are you safe? If no response, we'll alert your emergency contacts.");
+                        remainingTime = 30 * 60;
+                    }
+                    const minutes = Math.floor(remainingTime / 60);
+                    const seconds = remainingTime % 60;
+                    statusElement.textContent = `Next check-in: ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }, 1000);
+            } else {
+                clearInterval(checkInInterval);
+                statusElement.textContent = 'Safety check-in is off';
+            }
+        });
+
+        // Self-Defense Tips
+        const tips = [
+            "Stay aware of your surroundings at all times.",
+            "Trust your instincts. If a situation feels unsafe, leave immediately.",
+            "Walk with confidence and purpose.",
+            "Carry a personal alarm or whistle.",
+            "Learn basic self-defense techniques.",
+            "Stay in well-lit and populated areas when possible.",
+            "Have your keys ready before you reach your door or car.",
+            "Vary your routine to be less predictable.",
+            "Keep your phone charged and easily accessible.",
+            "Share your location with trusted friends or family when going out."
+        ];
+
+        function displayRandomTip() {
+            const tipElement = document.getElementById('selfDefenseTip');
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            tipElement.textContent = randomTip;
+        }
+
+        document.getElementById('newTip').addEventListener('click', displayRandomTip);
+        displayRandomTip(); // Display initial tip
+
+        // Real-Time Alerts
+        const alerts = [
+            "Suspicious activity reported near Central Park.",
+            "Heavy traffic on Main Street due to construction.",
+            "Severe weather warning: Thunderstorms expected this evening.",
+            "Local community event: Self-defense workshop this Saturday.",
+            "Remember to update your emergency contacts in the app settings."
+        ];
+
+        function displayRandomAlerts() {
+            const alertsElement = document.getElementById('alerts');
+            alertsElement.innerHTML = '';
+            const randomAlerts = alerts.sort(() => 0.5 - Math.random()).slice(0, 3);
+            randomAlerts.forEach(alert => {
+                const alertElement = document.createElement('div');
+                alertElement.className = 'alert';
+                alertElement.textContent = alert;
+                alertsElement.appendChild(alertElement);
+            });
+        }
+
+        displayRandomAlerts();
+        setInterval(displayRandomAlerts, 30000);
+
+        // Community Support
+        const communityReports = [
+            "Suspicious person spotted near Main St. and 5th Ave.",
+            "Street light out on Elm St. - area is very dark at night.",
+            "Group of volunteers patrolling Central Park area tonight.",
+            "Free self-defense class being offered at the community center this weekend.",
+            "New safe walk program started for university students."
+        ];
+
+        function displayCommunityReports() {
+            const reportsElement = document.getElementById('communityReports');
+            reportsElement.innerHTML = '';
+            const randomReports = communityReports.sort(() => 0.5 - Math.random()).slice(0, 3);
+            randomReports.forEach(report => {
+                const reportElement = document.createElement('div');
+                reportElement.className = 'report';
+                reportElement.textContent = report;
+                reportsElement.appendChild(reportElement);
+            });
+        }
+
+        displayCommunityReports();
+        document.getElementById('reportIncident').addEventListener('click', function() {
+            const incident = prompt("Please describe the incident or safety tip:");
+            if (incident) {
+                communityReports.push(incident);
+                displayCommunityReports();
+                alert("Thank you for your report. Stay safe!");
+            }
+        });
+
+        // Virtual Walk Buddy
+        document.getElementById('startWalk').addEventListener('click', function() {
+            const walkStatus = document.getElementById('walkStatus');
+            walkStatus.textContent = "Virtual walk in progress. Your trusted contact has been notified.";
+            setTimeout(() => {
+                walkStatus.textContent = "Virtual walk completed. Your trusted contact has been notified of your safe arrival.";
+            }, 10000); // Simulating a 10-second walk for demonstration
+        });
+
+        // Safe Routes
+        document.getElementById('findRoute').addEventListener('click', function() {
+            const destination = document.getElementById('destination').value;
+            if (destination) {
+                const routeInfo = document.getElementById('routeInfo');
+                routeInfo.textContent = `Calculating safest route to ${destination}...`;
+                setTimeout(() => {
+                    routeInfo.textContent = `Safest route to ${destination}: Take Main St, turn right on Oak Ave, continue straight until you reach your destination. This route is well-lit and has high foot traffic.`;
+                }, 2000);
+            } else {
+                alert("Please enter a destination.");
+            }
+        });
+
+        // Audio/Video Recording
+        let isRecording = false;
+        document.getElementById('toggleRecording').addEventListener('click', function() {
+            isRecording = !isRecording;
+            const recordingStatus = document.getElementById('recordingStatus');
+            if (isRecording) {
+                this.textContent = "Stop Recording";
+                recordingStatus.textContent = "Recording in progress...";
+            } else {
+                this.textContent = "Start Recording";
+                recordingStatus.textContent = "Recording stopped and saved.";
+            }
+        });
+
+        // Emergency Services Directory
+        const emergencyServices = ['Police', 'Ambulance', 'Fire Department'];
+        emergencyServices.forEach(service => {
+            document.getElementById(`call${service.replace(/\s+/g, '')}`).addEventListener('click', function() {
+                alert(`Simulating call to ${service}. In a real emergency, this would connect you directly to ${service}.`);
+            });
+        });
+
+        // Privacy Mode
+        let privacyModeEnabled = false;
+        document.getElementById('togglePrivacyMode').addEventListener('click', function() {
+            privacyModeEnabled = !privacyModeEnabled;
+            const privacyModeStatus = document.getElementById('privacyModeStatus');
+            if (privacyModeEnabled) {
+                this.textContent = "Disable Privacy Mode";
+                privacyModeStatus.textContent = "Privacy Mode is on";
+                document.body.style.filter = "grayscale(100%)";
+            } else {
+                this.textContent = "Enable Privacy Mode";
+                privacyModeStatus.textContent = "Privacy Mode is ";
+                document.body.style.filter = "none";
+            }
+        });
+
+        // Silent Alarm
+        document.getElementById('activateSilentAlarm').addEventListener('click', function() {
+            alert("Silent alarm activated. Authorities have been notified of your location.");
+        });
+
+        // Personalized Safety Profile
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const emergencyContact = document.getElementById('emergencyContact').value;
+            const medicalInfo = document.getElementById('medicalInfo').value;
+            const safetyPreferences = document.getElementById('safetyPreferences').value;
+            
+            // In a real app, this data would be securely stored and used to personalize the user's experience
+            alert(`Profile saved for ${name}. Emergency contact: ${emergencyContact}. Safety preference: ${safetyPreferences}`);
+        });
+
+        // Chatbot for Immediate Guidance
+        const chatbotMessages = document.getElementById('chatbotMessages');
+        const userMessageInput = document.getElementById('userMessage');
+        const sendMessageButton = document.getElementById('sendMessage');
+
+        function addMessage(message, isUser = false) {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = message;
+            messageElement.style.marginBottom = '10px';
+            messageElement.style.padding = '5px';
+            messageElement.style.borderRadius = '5px';
+            messageElement.style.maxWidth = '80%';
+            if (isUser) {
+                messageElement.style.marginLeft = 'auto';
+                messageElement.style.backgroundColor = '#e0f2f1';
+            } else {
+                messageElement.style.backgroundColor = '#f1f8e9';
+            }
+            chatbotMessages.appendChild(messageElement);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+        }
+
+        function getBotResponse(message) {
+            const responses = {
+                "help": "If you're in immediate danger, use the Emergency SOS button. For less urgent situations, try our Virtual Walk Buddy or Safe Routes features.",
+                "scared": "It's okay to feel scared. Try to find a safe, well-lit area. Use our location sharing feature to let a friend know where you are.",
+                "emergency": "If it's an emergency, please use the Emergency SOS button immediately. It will alert authorities and your emergency contacts.",
+                "default": "I'm here to help. Can you tell me more about your situation? You can ask about our features or for specific safety advice."
+            };
+
+            const lowerMessage = message.toLowerCase();
+            for (const key in responses) {
+                if (lowerMessage.includes(key)) {
+                    return responses[key];
+                }
+            }
+            return responses.default;
+        }
+
+        sendMessageButton.addEventListener('click', function() {
+            const userMessage = userMessageInput.value.trim();
+            if (userMessage) {
+                addMessage(userMessage, true);
+                userMessageInput.value = '';
+                setTimeout(() => {
+                    const botResponse = getBotResponse(userMessage);
+                    addMessage(botResponse);
+                }, 500);
+            }
+        });
+
+        userMessageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessageButton.click();
+            }
+        });
+
+        // Emergency Fund/Assistance
+        document.getElementById('emergencyFundForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = document.getElementById('fundAmount').value;
+            const reason = document.getElementById('fundReason').value;
+            
+            // In a real app, this would initiate a secure process to provide emergency funds
+            alert(`Emergency assistance request for $${amount} for ${reason} has been submitted. Our team will contact you shortly.`);
+        });
+
+        // Initial chatbot message
+        addMessage("Hello! I'm your safety assistant. How can I help you today?");
+    </script>
+</body>
+</html>
+

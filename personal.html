@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personalized Safety Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        form {
+            display: grid;
+            gap: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="tel"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .emergency-contacts {
+            margin-top: 20px;
+        }
+        .contact {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Personalized Safety Profile</h1>
+        <form id="safety-profile-form">
+            <div>
+                <label for="name">Full Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="address">Home Address:</label>
+                <textarea id="address" name="address" rows="3" required></textarea>
+            </div>
+            <div>
+                <label for="medical-info">Medical Information (allergies, conditions, etc.):</label>
+                <textarea id="medical-info" name="medical-info" rows="4"></textarea>
+            </div>
+            <div>
+                <label for="safe-word">Personal Safe Word:</label>
+                <input type="text" id="safe-word" name="safe-word" required>
+            </div>
+            <div>
+                <label for="preferred-hospital">Preferred Hospital:</label>
+                <input type="text" id="preferred-hospital" name="preferred-hospital">
+            </div>
+            <div>
+                <label for="safety-level">Default Safety Level:</label>
+                <select id="safety-level" name="safety-level">
+                    <option value="low">Low (Normal day-to-day activities)</option>
+                    <option value="medium">Medium (Unfamiliar areas or situations)</option>
+                    <option value="high">High (Feeling unsafe or threatened)</option>
+                </select>
+            </div>
+            <button type="submit">Save Profile</button>
+        </form>
+
+        <div class="emergency-contacts">
+            <h2>Emergency Contacts</h2>
+            <div id="contacts-list"></div>
+            <form id="add-contact-form">
+                <input type="text" id="contact-name" placeholder="Contact Name" required>
+                <input type="tel" id="contact-phone" placeholder="Contact Phone" required>
+                <input type="text" id="contact-relationship" placeholder="Relationship" required>
+                <button type="submit">Add Contact</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('safety-profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const profileData = Object.fromEntries(formData.entries());
+            localStorage.setItem('safetyProfile', JSON.stringify(profileData));
+            alert('Safety profile saved successfully!');
+        });
+
+        const contactsList = document.getElementById('contacts-list');
+        const addContactForm = document.getElementById('add-contact-form');
+
+        function displayContacts() {
+            const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+            contactsList.innerHTML = contacts.map((contact, index) => `
+                <div class="contact">
+                    <strong>${contact.name}</strong> (${contact.relationship})<br>
+                    Phone: ${contact.phone}
+                    <button onclick="deleteContact(${index})">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        addContactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const phone = document.getElementById('contact-phone').value;
+            const relationship = document.getElementById('contact-relationship').value;
+            
+            const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+            contacts.push({ name, phone, relationship });
+            localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            
+            displayContacts();
+            addContactForm.reset();
+        });
+
+        function deleteContact(index) {
+            const contacts = JSON.parse(localStorage.getItem('emergencyContacts')) || [];
+            contacts.splice(index, 1);
+            localStorage.setItem('emergencyContacts', JSON.stringify(contacts));
+            displayContacts();
+        }
+
+        // Load saved profile data if it exists
+        window.addEventListener('load', function() {
+            const savedProfile = localStorage.getItem('safetyProfile');
+            if (savedProfile) {
+                const profileData = JSON.parse(savedProfile);
+                Object.keys(profileData).forEach(key => {
+                    const field = document.getElementById(key);
+                    if (field) field.value = profileData[key];
+                });
+            }
+            displayContacts();
+        });
+    </script>
+</body>
+</html>

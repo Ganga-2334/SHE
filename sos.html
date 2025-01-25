@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency SOS - Women's Safety App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .sos-button {
+            display: block;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background-color: #ff4444;
+            border: none;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .sos-button:hover {
+            background-color: #ff0000;
+            transform: scale(1.05);
+        }
+        .sos-button:active {
+            background-color: #cc0000;
+            transform: scale(0.95);
+        }
+        .status {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .emergency-contacts, .emergency-services {
+            margin-top: 30px;
+        }
+        .contact, .service {
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .contact-button, .service-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .location {
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        #map {
+            width: 100%;
+            height: 200px;
+            background-color: #e0e0e0;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Emergency SOS</h1>
+        <button id="sosButton" class="sos-button">SOS</button>
+        <p id="status" class="status">Ready to send emergency alert</p>
+        
+        <div id="location" class="location">
+            Locating your position...
+        </div>
+        <div id="map"></div>
+        
+        <div class="emergency-contacts">
+            <h2>Emergency Contacts</h2>
+            <div class="contact">
+                <span>John Doe (Brother)</span>
+                <button class="contact-button" onclick="contactEmergencyContact('John Doe')">Contact</button>
+            </div>
+            <div class="contact">
+                <span>Jane Smith (Friend)</span>
+                <button class="contact-button" onclick="contactEmergencyContact('Jane Smith')">Contact</button>
+            </div>
+        </div>
+        
+        <div class="emergency-services">
+            <h2>Emergency Services</h2>
+            <div class="service">
+                <span>Police</span>
+                <button class="service-button" onclick="contactEmergencyService('Police')">Call</button>
+            </div>
+            <div class="service">
+                <span>Ambulance</span>
+                <button class="service-button" onclick="contactEmergencyService('Ambulance')">Call</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sosButton = document.getElementById('sosButton');
+        const statusElement = document.getElementById('status');
+        const locationElement = document.getElementById('location');
+        let isEmergencyActive = false;
+
+        sosButton.addEventListener('click', toggleEmergency);
+
+        function toggleEmergency() {
+            isEmergencyActive = !isEmergencyActive;
+            if (isEmergencyActive) {
+                activateEmergency();
+            } else {
+                deactivateEmergency();
+            }
+        }
+
+        function activateEmergency() {
+            sosButton.style.backgroundColor = '#4CAF50';
+            sosButton.textContent = 'ACTIVE';
+            statusElement.textContent = 'Emergency alert sent to all contacts';
+            statusElement.style.color = '#ff0000';
+            
+            // Simulate sending emergency alert
+            setTimeout(() => {
+                alert('Emergency alert sent to all your emergency contacts with your current location.');
+            }, 1000);
+
+            // Simulate contacting emergency services
+            setTimeout(() => {
+                alert('Automatic call placed to emergency services. Help is on the way.');
+            }, 2000);
+        }
+
+        function deactivateEmergency() {
+            sosButton.style.backgroundColor = '#ff4444';
+            sosButton.textContent = 'SOS';
+            statusElement.textContent = 'Emergency alert deactivated';
+            statusElement.style.color = '#333';
+            
+            setTimeout(() => {
+                statusElement.textContent = 'Ready to send emergency alert';
+            }, 3000);
+        }
+
+        function contactEmergencyContact(name) {
+            alert(`Contacting ${name}...`);
+            // In a real app, this would initiate a call or send a message
+        }
+
+        function contactEmergencyService(service) {
+            alert(`Calling ${service}...`);
+            // In a real app, this would initiate a call to the emergency service
+        }
+
+        // Simulating geolocation
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                locationElement.textContent = `Your location: ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                
+                // In a real app, you would use a mapping service like Google Maps to display the location
+                const mapElement = document.getElementById('map');
+                mapElement.textContent = `Map showing location at ${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+            },
+            (error) => {
+                locationElement.textContent = `Error getting location: ${error.message}`;
+            }
+        );
+    </script>
+</body>
+</html>

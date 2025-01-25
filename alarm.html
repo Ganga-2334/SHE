@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silent Alarm - Women's Safety App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        .alarm-button {
+            display: block;
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            border-radius: 50%;
+            background-color: #ff4444;
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .alarm-button:hover {
+            background-color: #ff0000;
+        }
+        .alarm-button:active {
+            background-color: #cc0000;
+        }
+        .status {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .emergency-contacts {
+            margin-top: 30px;
+        }
+        .contact {
+            background-color: #f9f9f9;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .settings {
+            margin-top: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="tel"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .save-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .save-button:hover {
+            background-color: #45a049;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Silent Alarm</h1>
+        <button id="silentAlarmButton" class="alarm-button">Activate Silent Alarm</button>
+        <p class="status" id="alarmStatus">Alarm is inactive</p>
+        
+        <div class="emergency-contacts">
+            <h2>Emergency Contacts</h2>
+            <div id="contactsList"></div>
+        </div>
+        
+        <div class="settings">
+            <h2>Settings</h2>
+            <form id="settingsForm">
+                <label for="alarmMessage">Custom Alarm Message:</label>
+                <input type="text" id="alarmMessage" name="alarmMessage" placeholder="I need help. This is an emergency.">
+                
+                <h3>Emergency Contacts</h3>
+                <div id="contactInputs">
+                    <div class="contact-input">
+                        <input type="text" name="contactName[]" placeholder="Contact Name" required>
+                        <input type="tel" name="contactPhone[]" placeholder="Contact Phone" required>
+                    </div>
+                </div>
+                <button type="button" id="addContact" class="save-button">Add Another Contact</button>
+                <button type="submit" class="save-button">Save Settings</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const silentAlarmButton = document.getElementById('silentAlarmButton');
+        const alarmStatus = document.getElementById('alarmStatus');
+        const contactsList = document.getElementById('contactsList');
+        const settingsForm = document.getElementById('settingsForm');
+        const addContactButton = document.getElementById('addContact');
+
+        let isAlarmActive = false;
+        let alarmMessage = "I need help. This is an emergency.";
+        let emergencyContacts = [
+            { name: "John Doe", phone: "123-456-7890" },
+            { name: "Jane Smith", phone: "098-765-4321" }
+        ];
+
+        function toggleAlarm() {
+            isAlarmActive = !isAlarmActive;
+            if (isAlarmActive) {
+                silentAlarmButton.textContent = "Deactivate Silent Alarm";
+                silentAlarmButton.style.backgroundColor = "#4CAF50";
+                alarmStatus.textContent = "Alarm is active - Emergency contacts notified";
+                notifyContacts();
+            } else {
+                silentAlarmButton.textContent = "Activate Silent Alarm";
+                silentAlarmButton.style.backgroundColor = "#ff4444";
+                alarmStatus.textContent = "Alarm is inactive";
+            }
+        }
+
+        function notifyContacts() {
+            console.log("Notifying emergency contacts:");
+            emergencyContacts.forEach(contact => {
+                console.log(`Sending message to ${contact.name} (${contact.phone}): ${alarmMessage}`);
+            });
+            // In a real app, this would send actual notifications or messages
+        }
+
+        function displayContacts() {
+            contactsList.innerHTML = '';
+            emergencyContacts.forEach(contact => {
+                const contactDiv = document.createElement('div');
+                contactDiv.className = 'contact';
+                contactDiv.textContent = `${contact.name}: ${contact.phone}`;
+                contactsList.appendChild(contactDiv);
+            });
+        }
+
+        function addContactInput() {
+            const contactInput = document.createElement('div');
+            contactInput.className = 'contact-input';
+            contactInput.innerHTML = `
+                <input type="text" name="contactName[]" placeholder="Contact Name" required>
+                <input type="tel" name="contactPhone[]" placeholder="Contact Phone" required>
+            `;
+            document.getElementById('contactInputs').appendChild(contactInput);
+        }
+
+        silentAlarmButton.addEventListener('click', toggleAlarm);
+
+        settingsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alarmMessage = document.getElementById('alarmMessage').value || alarmMessage;
+            
+            const names = document.getElementsByName('contactName[]');
+            const phones = document.getElementsByName('contactPhone[]');
+            emergencyContacts = [];
+            
+            for (let i = 0; i < names.length; i++) {
+                if (names[i].value && phones[i].value) {
+                    emergencyContacts.push({
+                        name: names[i].value,
+                        phone: phones[i].value
+                    });
+                }
+            }
+            
+            displayContacts();
+            alert("Settings saved successfully!");
+        });
+
+        addContactButton.addEventListener('click', addContactInput);
+
+        // Initial display of contacts
+        displayContacts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Routes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            background-color: #e0e0e0;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .route-options {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .route-option {
+            flex: 1;
+            margin: 0 10px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .route-option:hover {
+            background-color: #e0e0e0;
+        }
+        .route-option.selected {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .route-details {
+            margin-top: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Safe Routes</h1>
+        <div>
+            <input type="text" id="start" placeholder="Enter start location">
+            <input type="text" id="destination" placeholder="Enter destination">
+            <button onclick="findRoutes()">Find Safe Routes</button>
+        </div>
+        <div id="map">
+            <!-- Map will be rendered here -->
+        </div>
+        <div class="route-options" id="routeOptions">
+            <!-- Route options will be dynamically added here -->
+        </div>
+        <div class="route-details" id="routeDetails">
+            <!-- Selected route details will be shown here -->
+        </div>
+    </div>
+
+    <script>
+        // Simulated route data
+        const routes = [
+            { id: 1, name: "Safest Route", duration: "25 mins", distance: "2.3 km", safety: "High" },
+            { id: 2, name: "Fastest Route", duration: "20 mins", distance: "2.1 km", safety: "Medium" },
+            { id: 3, name: "Alternative Route", duration: "30 mins", distance: "2.5 km", safety: "High" }
+        ];
+
+        function findRoutes() {
+            const start = document.getElementById('start').value;
+            const destination = document.getElementById('destination').value;
+
+            if (start && destination) {
+                displayRouteOptions();
+                simulateMapDisplay(start, destination);
+            } else {
+                alert("Please enter both start and destination locations.");
+            }
+        }
+
+        function displayRouteOptions() {
+            const routeOptionsContainer = document.getElementById('routeOptions');
+            routeOptionsContainer.innerHTML = '';
+
+            routes.forEach(route => {
+                const routeElement = document.createElement('div');
+                routeElement.className = 'route-option';
+                routeElement.innerHTML = `
+                    <h3>${route.name}</h3>
+                    <p>Duration: ${route.duration}</p>
+                    <p>Distance: ${route.distance}</p>
+                    <p>Safety: ${route.safety}</p>
+                `;
+                routeElement.onclick = () => selectRoute(route);
+                routeOptionsContainer.appendChild(routeElement);
+            });
+        }
+
+        function selectRoute(route) {
+            // Remove 'selected' class from all route options
+            document.querySelectorAll('.route-option').forEach(el => el.classList.remove('selected'));
+
+            // Add 'selected' class to the clicked route option
+            event.currentTarget.classList.add('selected');
+
+            // Display route details
+            const routeDetailsContainer = document.getElementById('routeDetails');
+            routeDetailsContainer.innerHTML = `
+                <h2>Selected Route: ${route.name}</h2>
+                <p>Duration: ${route.duration}</p>
+                <p>Distance: ${route.distance}</p>
+                <p>Safety Level: ${route.safety}</p>
+                <p>This route has been chosen based on factors such as lighting, population density, and reported incidents.</p>
+                <button onclick="startNavigation()">Start Navigation</button>
+            `;
+        }
+
+        function simulateMapDisplay(start, destination) {
+            const mapContainer = document.getElementById('map');
+            mapContainer.innerHTML = `<p>Map displaying route from ${start} to ${destination}</p>`;
+            // In a real application, this is where you would initialize and display an actual map
+            // using a service like Google Maps, Mapbox, or OpenStreetMap
+        }
+
+        function startNavigation() {
+            alert("Navigation started. In a real app, this would initiate turn-by-turn navigation.");
+            // In a real application, this function would start the actual navigation
+            // possibly integrating with the device's GPS and providing real-time updates
+        }
+    </script>
+</body>
+</html>
